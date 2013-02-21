@@ -1,0 +1,38 @@
+
+	
+<canvas width="500" height="150" id="canvas_slupki_kolor">Twoja przegl¹darka nie obs³uguje canvas</canvas>
+
+<script>
+   var c = document.getElementById('canvas_slupki_kolor').getContext('2d');
+var dane = [100,80,70,20,10,50,30,90,43];   
+var max = 100; //dla u³atwienia maksymaln¹ wartoœæ ustawiamy z palca
+var min = 10; //to samo dla min
+ 
+var kolory = ['#d31111','#f55625','#f5bd25','#f5e925','#c6f525'];
+ 
+//dana wielkoœæ musi siê zawieraæ w jakimœ przedziale - np 0-25 - to pierwszy kolor, 25-50 - drugi kolor itp.
+var przedzial = Math.floor(max / kolory.length);
+var width_wykresow = 560;
+var od_x = 600 - 560;
+var co_ile = Math.round(560 / dane.length)-10;
+         
+var tlo = new Image();      
+    tlo.onload = function(){    
+     /*Podstawowy wariant u¿ycia metody drawImage(image, x, y) przyjmuje nastêpuj¹ce atrybuty:
+image - okreœla obrazek, który bêdziemy rysowaæ na p³ótnie,
+x, y - okreœlaj¹ po³o¿enie rysowanego obrazka na p³ótnie.*/
+        c.drawImage(tlo,0,0);
+         
+        for (i=0; i<dane.length; i++) {              
+            var x_slupka = od_x + i*co_ile - 20
+            c.fillStyle = "rgba(0, 0, 0, 0.3)";
+            c.fillRect(x_slupka,115,45,-dane[i]);
+             
+            var kolor = kolory[ Math.floor((dane[i]-min) / przedzial) ]
+         
+            c.fillStyle = kolor;                
+            c.fillRect(x_slupka,115,40,-dane[i]);
+        }
+    }
+tlo.src = 'background.jpg'; 
+</script>

@@ -1,0 +1,29 @@
+<form class="Formularz">
+		<fieldset>
+		<label for="PoleText">Wpisz jakiœ tekst:</label>
+		<input type="text" value="" id="PoleTest" />
+		<textarea id="textarea" style="width:90%" readonly="readonly"></textarea>
+		</fieldset>
+	</form>
+	
+	
+	<script>
+		function klawisz(e){
+		if (!e) var e = window.event;
+		if (e.keyCode) return e.keyCode;
+		}
+
+		document.getElementById('PoleTest').onkeydown = function(e) {
+		document.getElementById('textarea').value += 'Klawisz: ' + String.fromCharCode(klawisz(e)) + ', ';
+		}
+	</script>
+	
+	<script>
+	//Wiêkszoœæ elementów na stronie wykonuje domyœlne akcje. Linki przenosz¹ w jakieœ miejsca, formularz siê wysy³aj¹ itp. Po podpiêciu zdarzeñ pod obiekt bêd¹ ono wywo³ywane na pocz¹tku, jednak zaraz po nich wykonana zostanie domyœlna czynnoœæ.
+//Aby temu zapobiec skorzystamy z metody e.preventDefault():
+
+element.addEventListener('click',function (e) {
+    alert('Ten link nigdzie nie przeniesie.');
+    e.preventDefault();
+},false);
+	</script>

@@ -1,0 +1,37 @@
+<input type="button" id="guzik" value="kliknij" />
+
+<script type="text/javascript">
+function wypisz() {
+    alert(' zosta³em klikniêty! ');
+	this.style.backgroundColor = 'yellow';
+}
+ 
+document.getElementById('guzik').onclick = wypisz
+</script>
+<!--Oczywiœcie je¿eli takie zdarzenie chcielibyœmy przypisaæ powiedzmy 
+do naszych 1000 nieszczêsnych linków, wystarczy³o by, byœmy wykonali odpowiedni¹ pêtlê:
+
+var a = document.getElementsByTagName('a');
+for (x=0; x<a.length; x++) {
+    a[x].onclick = function() {...}
+}-->
+
+
+<script>
+/*Problemów takich nie mamy korzystaj¹c z "zaawansowanego"
+ modelu rejestrowania zdarzeñ opieraj¹cego siê na metodzie addEventListener().
+
+Przyjmuje ona 3 argumenty: typ zdarzenia, funkcja do wywo³ania, 
+oraz trzeci (true/false) który w³¹cza lub wy³¹cza b¹belkowe zachowanie zdarzeñ.
+ W praktyce trzeci argument zawsze pozostaje jako false, wiêc nie musimy sobie
+ nim zawracaæ g³owy.
+Kto programowa³ choæ przez chwilê w Action Script 3 - nie bêdzie mia³ ¿adnych
+ problemów ze zrozumieniem tego typu obs³ugi zdarzañ*/
+element.addEventListener('click', startDragDrop, false)
+ 
+element.addEventListener('click', wypiszCos, false)
+ 
+element.addEventListener('click',function () {
+    this.style.color = 'red';
+},false);
+</script>

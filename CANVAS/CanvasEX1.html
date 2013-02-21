@@ -1,0 +1,126 @@
+<canvas width="400" height="150" id="canvas_3">Twoja przegl¹darka nie obs³uguje canvas</canvas>
+	
+	<script>
+		var canvas = document.getElementById('canvas_3');
+		if (canvas.getContext){
+			var dane = [30,30,40,100,30,20,50,10,5,7,3,15,20,60,28,15,10,20,10,70];
+			var co_ile = parseInt(400 / dane.length);
+			var c = canvas.getContext('2d');
+			
+				c.beginPath();
+				//gorne ramie
+				c.moveTo(0,150-dane[0]);
+				//fillText("tekst",x,y)
+				c.fillText(dane[0],0,150-dane[0]-10);
+				
+				for (x=1; x<dane.length; x++) {
+				//Do rysowania linii wykorzystujemy metodê lineTo(x,y), 
+				//która rysuje œcie¿kê z aktualnej pozycji do pozycji x, y.
+					c.lineTo(x*co_ile, 150-dane[x]);
+					c.fillText(dane[x],x*co_ile,150-dane[x]-10);
+				}
+				//zamykamy kszta³t od do³u
+				c.lineTo(x*co_ile, 150);
+				c.lineTo(0,150);
+				c.closePath();
+				//obrysowujemy
+				c.fill();
+		}
+	</script>
+	
+	<canvas width="400" height="150" id="canvas_4">Twoja przegl¹darka nie obs³uguje canvas</canvas>
+	<script>
+	function degreeToRadians(kat) {
+    return radians = (Math.PI/180)*kat;
+}
+ 
+var canvas = document.getElementById('canvas_4');
+if (canvas.getContext){
+    var c = canvas.getContext('2d');                
+        for (x=0; x<4; x++) {
+            c.beginPath();
+			/*arc(x, y, r, start, koniec, kierunek rysowania [false lub true])
+
+Atrybuty x i y okreœlaj¹ miejsce postawienia ig³y cyrkla.
+ Start i koniec okreœlaj¹ graniczne k¹ty, w których bêdzie zawiera³ siê nasz ³uk.
+ W przypadku canvas s¹ one podawane w radianach, dlatego musimy je skonwertowaæ
+ do stopni za pomoc¹ wzoru:(degreeToRadians)
+ Ostatni parametr okreœla, czy ³uk ma byæ rysowany zgonie z ruchem wskazówek czy nie.
+
+
+*/
+            c.arc(75,75,40+(x*10),degreeToRadians(10),degreeToRadians(300),false);                    
+            c.stroke();
+        }               
+} 
+	</script>
+	
+	
+	
+<canvas width="150" height="150" id="canvas_5">Twoja przegl¹darka nie obs³uguje canvas</canvas>	
+	<script>
+	var canvas = document.getElementById('canvas_5');
+if (canvas.getContext){
+    var c = canvas.getContext('2d');                
+        c.beginPath();
+ 
+        //rysujemy oczy
+        c.moveTo(60,20);
+        c.lineTo(60,50);
+        c.moveTo(90,20);
+        c.lineTo(90,50);
+ 
+        //brwi
+        c.moveTo(50,20);
+        c.lineTo(70,5);
+        c.moveTo(80,5);
+        c.lineTo(100,20);
+ 
+        //rysujemy usmiech
+        c.moveTo(10,80);
+		/*bezierCurveTo(pk1x, pk1y, pk2x, pk2y, x, y) - rysuje œcie¿kê beziera do punktu
+		x, y. Atrybuty pk1x, pk1y, pk2x, pk2y okreœlaj¹ po³o¿enie punktów kontrolnych.*/
+        c.bezierCurveTo(30,130,120,130,140,80);
+        c.moveTo(10,80);
+        c.bezierCurveTo(30,150,120,150,140,80);
+        c.stroke();
+}  
+</script>
+<p>
+<canvas width="200" height="150" id="canvas_gradient1">Twoja przegl¹darka nie obs³uguje canvas</canvas>
+<canvas width="200" height="150" id="canvas_gradient2">Twoja przegl¹darka nie obs³uguje canvas</canvas>
+</p>
+<script>
+var canvas1 = document.getElementById('canvas_gradient1');
+		if (canvas1.getContext){
+			var c1 = canvas1.getContext('2d');
+			/*createLinearGradient(x1,y1,x2,y2) - tworzy obiekt gradientu, który mo¿emy 
+			wykorzystaæ do obrysowani albo wype³nienia rysowanych figur. Gradient liniowy
+			biegnie z punktu x1,y1 do punktu x2,y2*/
+			 var grad = c1.createLinearGradient(0,0,100,50);
+				  grad.addColorStop(0, '#00ABEB');//blue
+				  grad.addColorStop(0.5, '#fff');//white
+				  grad.addColorStop(0.7, '#D14F2E');
+				c1.fillStyle = grad;
+				c1.fillRect(10,10,180,80);
+
+		}
+		
+		var canvas2 = document.getElementById('canvas_gradient2');
+		if (canvas2.getContext){
+			var c2 = canvas2.getContext('2d');
+			/*createRadialGradient(x1,y1,r1,x2,y2,r2) - ustawia gradient radialny.
+			Atrybuty x1,y1,r1 - okreœlaj¹ po³o¿enie i promieñ 1 okrêgu, natomiast x2,y2,r2 - 
+			drugiego*/
+			 var grad = c2.createRadialGradient(50,50,100,150,50,100);
+			 //addColorStop(pozycja, kolor) - dodaje nowy kolor do gradientu
+             //w pozycji z przedzia³u 0.0 - 1.0. 
+			 //Mo¿esz dodawaæ takich punktów do woli.
+				  grad.addColorStop(0, '#00ABEB');
+				  grad.addColorStop(0.5, '#fff');
+				  grad.addColorStop(1, '#B3DA4C');
+				c2.fillStyle = grad;
+				c2.fillRect(10,10,180,80);
+
+		}	
+</script>

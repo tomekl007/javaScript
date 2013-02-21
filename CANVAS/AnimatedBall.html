@@ -1,0 +1,30 @@
+<canvas width="400" height="200" id="canvas_anim1">Twoja przegladarka nie obsluguje canvas</canvas>
+<script>
+	function draw() {	
+		cAnimacja.clearRect(0,0,400,200);
+		if (x_gwiazdki<0 || x_gwiazdki>400-64) {
+			przesuniecieX = -przesuniecieX;
+		}
+		if (y_gwiazdki<0 || y_gwiazdki>200-64) {
+			przesuniecieY = -przesuniecieY;
+		}		
+		
+		//do x i y gwiazdki dodajemy przesuniecie
+		x_gwiazdki += przesuniecieX;
+		y_gwiazdki += przesuniecieY;
+		cAnimacja.drawImage(obr, x_gwiazdki, y_gwiazdki);
+	}
+	
+	var przesuniecieX = 2;
+	var przesuniecieY = 2;
+	var x_gwiazdki = 0;
+	var	y_gwiazdki = 0;
+    var cAnimacja = document.getElementById('canvas_anim1').getContext('2d');
+	
+    var obr = new Image(24,24); //obrazek ma wymiary 24,24
+		obr.onload = function(){
+		//33- in miliseconds
+			setInterval('draw()',33);
+		}
+	    obr.src = 'gwiazdka.png';
+	</script>

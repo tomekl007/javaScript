@@ -1,0 +1,17 @@
+<form name="formularz">
+    <fieldset>
+    <input type="button" id="guzik_1" value="Guzik 1" />
+    <input type="button" id="guzik_2" value="Guzik 2" />;
+    <input type="button" id="guzik_3" value="Guzik 3" />
+    </fieldset>
+</form>
+     
+<script type="text/javascript">
+    function wypisz(tekst) {
+        alert(tekst)
+    }
+ 
+    document.getElementById('guzik_1').onclick = function() { wypisz('Ja jestem pierwszym guzikiem') }
+    document.getElementById('guzik_2').onclick = function() { wypisz('Ja jestem drugim guzikiem') }
+    document.getElementById('guzik_3').onclick = function() { wypisz('A ja nie chce byæ ostatnim guzikiem :(') }
+</script>

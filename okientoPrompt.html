@@ -1,0 +1,16 @@
+<input type="button" id="prompt" value="Okienko Prompt" />
+ 
+<script type="text/javascript">
+    function oknoPrompt() {
+    var imie = prompt('Podaj swoje imiê:', 'Kartofel');
+        if (imie != null) {
+            alert('Witaj ' + imie);
+        } else {
+            alert('Anulowa³eœ akcjê');
+        }
+    }
+ 
+    document.getElementById('prompt').onclick = function() {
+        oknoPrompt()
+    }
+</script>

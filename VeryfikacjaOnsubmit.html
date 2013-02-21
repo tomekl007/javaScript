@@ -1,0 +1,88 @@
+<style>
+		.error {color:red !important; border:1px solid #CF0000  !important; background:#FFEDEC  !important;}
+		.komunikat-z-errorem, .pole-z-errorem {border:1px solid #9A0800; background:#FFA09A; text-align:center; -moz-border-radius:3px; -webkit-border-radius:3px; color:#9A0800; margin-left:10px; padding:3px; font-size:0.8em;}
+	</style>
+
+
+<form id="Formularz">
+<fieldset>
+    <legend>Pole</legend>
+    <label for="Imie">Imiê:</label><input type="text" name="Imie" id="Imie" value="" />
+    <label for="Mail">E-mail:</label><input type="text" name="Mail" id="Mail" value="" />
+</fieldset>       
+ <fieldset>        
+    <input type="submit" value="Zapisz" />
+</fieldset>       
+</form>
+
+
+<script>
+/*Ostatnim sposobem, który chcia³em przedstawiæ, wykorzystuje dodatkowe klasy.
+Ka¿demu polu, które jest wymagane dodajemy klasê wymagane. Podczas indywidualnego 
+sprawdzania (wyœwietlania podpowiedzi) dodajemy takiemu polu odpowiedni¹ klasê daneOK lub daneError.
+Podczas wysy³ania danych wykonujemy pêtlê po wszystkich elementach formularza, sprawdzaj¹c 
+czy dany element ma klasê wymagane.
+Je¿eli element posiada tak¹ klasê, sprawdzamy czy posiada te¿ klasê daneError.
+Gdy jest to prawd¹, oznacza to, ¿e dane w tym polu s¹ niepoprawne. Aby dodawanie dodatkowych
+ klas by³o usprawnione, zmodyfikujmy nasze wczeœniejsze metody:*/
+ 
+Node.prototype.createError = function(msg, class) {
+    var class = class || 'komunikat-z-errorem';
+    if (this.nextSibling && (this.nextSibling.nodeName.toLowerCase()=='span' && this.nextSibling.className.indexOf(class)!=-1)) return false;
+ 
+    var spanError = document.createElement('span');
+    spanError.appendChild(document.createTextNode(msg));
+    spanError.className = class;
+    this.insertAfter(spanError);
+    this.className.replace(/ daneOK/,'');
+    this.className+=" daneError";
+}
+ 
+Node.prototype.removeError = function() {
+    if (this.nextSibling && (this.nextSibling.nodeName.toLowerCase()=='span' && this.nextSibling.className.indexOf(class)!=-1)) {
+        this.parentNode.removeChild(this.nextSibling);
+        this.className.replace(/ daneError/,'');
+        this.className+=" daneOk";
+    }
+}   
+
+//sprawdza zwyk³e pole tekstowe
+function sprawdzPole() {
+    if (this.value=='') {
+        this.createError('Wpisa³eœ z³e dane');
+        return false;
+    } else {                
+        this.removeError();
+        return true;
+    }
+}
+ 
+//funkcja sprawdza poprawnosc maila
+function sprawdzMaila() {
+    var WzorMaila = /^[0-9a-z_.-]+@[0-9a-z.-]+\.[a-z]{2,3}$/i
+    if (!WzorMaila.test(this.value)) {
+        this.createError('Poda³eœ z³ego emaila');
+        return false;
+    } else {
+        this.removeError();
+        return true;
+    }       
+}
+ 
+//etap 1 - podpowiedzi
+var formularz = document.getElementById('Formularz');
+formularz['Imie'].onchange = sprawdzPole;
+formularz['Mail'].onchange = sprawdzMaila;
+ //document.getElementById('Imie').onchange = sprawdzPole;
+ //document.getElementById('Mail').onchange = sprawdzMaila;
+ 
+//etap 2 - wysylanie
+formularz.onsubmit = function() {
+    for (x=0; x<this.forms.elements.length; x++) {
+        if (this.className.indexOf('wymagane')!=-1 && this.className.indexOf('daneError')!=-1) {
+            //b³êdne dane - nie wysy³amy
+            return false;
+        }
+    }
+    return true;
+}

@@ -1,0 +1,54 @@
+<style>
+		.zleDane {color:red; padding-left:3px; display:none}
+		#ImieReg2 {width:150px; display:inline}
+	</style>
+
+<form class="form">
+	<fieldset>
+	<div>		
+		<label for="ImieReg2">Podaj Imiê:</label>
+		<input type="text" id="ImieReg2" value="" /><span class="zleDane">Ÿle</span><br /><br />
+		<input type="button" value="Wyslij" />		
+	</div>		
+	</fieldset>
+	</form>
+ 
+
+ <script>
+var imie = document.getElementById('ImieReg2');
+var wzor = /^[a-zA-Z]+$/g
+imie.onchange = function() {
+    var errorSpan = this.nextSibling; //pobieramy span le¿¹cy tu¿ za naszym polem
+    if (!wzor.test(imie.value)) {
+	//zmienia wartosc .zleDane w css na display:inline
+                errorSpan.style.display = "inline";
+    } else {
+                errorSpan.style.display = "none";
+    }
+}
+</script>
+
+
+
+	<p>
+	<form class="form">
+	<fieldset>
+	<label for="email">Email:</label>
+	<input type="text" id="mail" value="" />
+	</fieldset>
+	</form>
+	</p>
+	
+	
+    <script>
+     document.getElementById('mail').onchange = function() {
+		var WzorMaila = /^[0-9a-z_.-]+@[0-9a-z.-]+\.[a-z]{2,3}$/i
+		if (!WzorMaila.test(this.value)) {
+			alert("B³êdny mail!");
+		} else {
+			alert('Twój mail to: ' + this.value);
+		}
+	}
+	</script>
+
+

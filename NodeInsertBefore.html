@@ -1,0 +1,36 @@
+<p id="insertB">
+<strong>Jestem pierwszym nodem</strong>
+</p>
+ 
+<input type="button" id="guzik" value="wstaw noda" />
+ 
+<script type="text/javascript">
+function wstawPrzed() {
+      var p = document.getElementById('insertB'); //pobieramy element <p>
+      var strong = p.firstChild; //pobieramy pierwsze dziecko p czyli element <strong>
+      var nowyNod = document.createTextNode('Jestem innym nodem, '); //tworzymy nowy nod z tekstem
+      p.insertBefore(nowyNod,strong); //wstawiamy go przed <strong>
+}
+ 
+document.getElementById('guzik').onclick = wstawPrzed; //pobieramy przycisk i przypisujemy mu zdarznie onclick
+</script>
+
+
+<script>
+//Czasami chcemy zamiast przed obiektem, wstawiæ coœ za nim.
+// Javascript nie posiada metody do tego s³u¿¹cej, wiêc musimy j¹ napisaæ sami:
+Node.prototype.insertAfter = function(newNode) {
+    if(this.nextSibling) { //jezeli dany element ma za soba jakis obiekt
+        return this.parentNode.insertBefore(newNode, this.nextSibling); //to wstawiamy przed tym obiektem nasz element
+    } else {
+        return this.parentNode.appendChild(newNode);
+    }
+}
+//Bu³eczka z mase³kiem. Za pomoc¹ istrukcji prototype, rozbudowaliœmy Node 
+//czyli pojedyñczy element na naszej stronie. Od tej chwili mo¿emy wstawiaæ nowe 
+//obiekty za elementem:
+
+
+var p = document.getElementById('akapit');
+    p.insertAfter(document.createTextNode('...');
+</script>

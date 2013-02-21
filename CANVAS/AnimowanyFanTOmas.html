@@ -1,0 +1,142 @@
+
+<canvas width="200" height="100" id="canvas_fantomas_wkracza_do_akcji">Twoja przegladarka nie obsluguje canvas</canvas><br />
+<script>
+	//klasa obiektów animowanych poklatkowo
+	/* Jest to na szybko przerobiona klasa _Gwiazdka, 
+	która teraz wyœwietla animowany poklatkowo obiekt. 
+	Dodatkowe atrybuty przy jej wywo³aniu to _c w którym podajemy z
+	mienn¹ zawieraj¹c¹ canvas (dziêki temu nasza metoda jest jeszcze bardziej super),
+	_obr wskazuj¹cy na obiekt z obrazkiem do wyœwietlenia oraz
+	_liczba_klatek, które dana animacja ma mieæ. 
+	Metoda draw zawiera kod animacji poklatkowej, który przed chwil¹ animowa³ Fantomasa.
+	Metodê ruszaj nieco uproœci³em, by by³a bardziej u¿yteczna dla naszych potrzeb. 
+	Sami ³atwo mo¿emy t¹ klasê rozbudowaæ by obiekty siê porusza³y, skaka³y czy gryz³y - co kto lubi.
+
+Skoro stworzyliœmy nasz¹ klasê, wykorzystajmy j¹ by jeszcze lepiej animowaæ naszego Fantomasa*/
+	function _Animowany_obiekt(_c, _x, _y, _speed, _obr, _liczba_klatek) {
+		this.x = _x;
+		this.y = _y;
+		this.speed = _speed;
+		this.przesuniecieX = this.speed;
+		this.przesuniecieY = this.speed;
+		this.canvas = _c;
+		
+		this.obr = _obr;
+		this.nr_klatki = 1;
+		this.liczba_klatek = _liczba_klatek;
+		this.szerokosc_klatki = _obr.width / _liczba_klatek;
+		this.wysokosc_klatki = _obr.height;
+		
+		this.draw = function() {
+			this.nr_klatki++;
+			if (this.nr_klatki>this.liczba_klatek) {this.nr_klatki = 1;}
+			var xklatki = (this.nr_klatki-1)*this.szerokosc_klatki;
+			/*Na pocz¹tku deklarujemy potrzebne zmienne - aktualn¹ klatkê, 
+			liczbê klatek, oraz wyliczamy ile jest wszystkich klatek w animacji.
+			Funkcja draw() wylicza sk¹d ma zacz¹æ wycinanie kawa³ka grafiki o rozmiarach
+			"szerokosc_klatki na wyokosc_klatki", a nastêpnie wyciêty fragment wyœwietla na p³ótnie.
+			Animacja ma byæ zapêtlona, st¹d w linijkach 18-21 sprawdzamy numer klatki i w razie czego go
+			cofamy.*/
+			this.canvas.drawImage(this.obr, xklatki, 0, this.szerokosc_klatki, this.wysokosc_klatki, this.x, this.y, this.szerokosc_klatki, this.wysokosc_klatki);
+		}		//drawImage(image, sx, sy, swidth, sheight, dx, dy, dWidth, dHeight) 
+//przesuniecie = 0 wiec nie bedzie ruszal do przodu
+		this.ruszaj = function() {		
+			this.x = this.x + this.przesuniecieX;
+			this.y = this.y + this.przesuniecieY;
+			this.draw();
+		}
+
+	}
+
+	//ustawiamy podstawowe zmienne - obrazki, canvas oraz animowanego Fantomasa
+	var cFA = document.getElementById('canvas_fantomas_wkracza_do_akcji').getContext('2d');
+	var dom_d = new Image(66,85);
+		dom_d.src = 'dom.png';
+	var dom_m = new Image(60,90);
+		dom_m.src = 'dom2.png';
+	var fire = new Image(135,41);
+		fire.src = "fire.png";
+    var fantom = new Image(240,66);
+		fantom.src = 'fantom.png';
+	
+	var fantomas = new _Animowany_obiekt(cFA, 60, 35, 0, fantom, 3);
+
+	//tworzmy domki przesówane w tle
+	var ile_domow_d = 3;
+	var ile_domow_m = 5;
+	
+	//domki wstawiamy do tablicy domy_d i domy_m - dla ka¿dego wybieramy szybkosc i pozycjê x
+	/*Utwórzmy teraz kilka domów, które bêd¹ siê przemieszczaæ w tle. 
+	Ma byæ ich kilka, wiêc tworzymy je za pomoc¹ 2 pêtli typu for, w których do 
+	tablic dla ka¿dego domu wstawiamy randomow¹ szybkoœæ i pozycjê x. Dziêki temu 
+	domki bêd¹ siê przesuwaæ w ró¿nym tempie, a ruch zaczn¹ od ró¿nego x miejsca. 
+	Jako, ¿e nie s¹ to poklatkowo animowane obiekty, wiêc nie stosujemy naszej klasy.*/
+	var domy_d = [];
+	for (i=0; i<ile_domow_d; i++) {
+		domy_d.push([2+Math.random() , Math.random()*200])
+	}
+
+	var domy_m = [];
+	for (i=0; i<ile_domow_m; i++) {
+		domy_m.push([1+Math.random() , Math.random()*200])
+	}
+
+	/* Zakoñczone przygotowania do wkroczenia do akcji, 
+	czas wiêc odpaliæ sekwencyjnie funkcjê drawFantomasAkcja() 
+	(je¿eli mamy kilka takich animacji na stronie, pamiêtajmy by ka¿da funkcja animuj¹ca mia³a swoj¹ 
+	unikaln¹ nazwê).
+Funkcja ta wykonuje pêtlê po wszystkich domkach i zmienia ich pozycjê x. 
+Je¿eli wyjd¹ poza p³ótno (czyli ich x bêdzie mniejsze od -szerokoœæ_domku), 
+wtedy ustawiamy pozycjê drzewka na nowo (na prawo) i wybieramy dla niego now¹ szybkoœæ. 
+Dodatkowo funkcja ta odpala metodê draw() naszego animowanego obiektu fantomas, która automatycznie go animuje.
+ Jest to ³opatologiczny kod, i nie ciekawy.
+
+Nas interesuj¹ bardziej rzeczy, które dziej¹ siê po tych 2 pêtlach.
+ Pierwsza rzecz to odpalenie metody draw() naszego animowanego obiektu.
+
+Kolejna - ostatnia czynnoœæ to losowy strza³ z pistoletu (wyœwietlenie obrazka wystrza³u).
+ Losowoœæ otrzymujemy przez równanie Math.random()>0.8. Wiemy, ¿e random() zwraca wartoœæ z przedzia³u 0-1,
+ wiêc nasza losowoœæ wynosi 20%. */
+	
+	//funkcja rysuj¹ca nasz¹ animacjê
+	function drawFantomasAkcja() {	
+		cFA.fillStyle = "#111";
+		cFA.fillRect(0,0,200,100);
+  //domy[szybkosc][pozycja] 
+		//poruszamy domki i w razie czego resetujemy ich pozycjê
+		//na poczatku rysujemy ma³e domki w tle
+		for (i=0; i<ile_domow_m; i++) {
+		//x = x - szybkosc
+			domy_m[i][1] = domy_m[i][1] - domy_m[i][0];
+			
+			cFA.drawImage(dom_m, domy_m[i][1], 20);
+			//jesli pozycja x < -szerokosci
+			if (domy_m[i][1] < -dom_m.width) {
+			//to x ustawiam z powrotem na 200
+				domy_m[i][1] = 200;
+				//a szybkosc losowa
+				domy_m[i][0] = 1 + Math.random();
+			}
+		}
+
+		for (j=0; j<ile_domow_d; j++) {
+			domy_d[j][1] = domy_d[j][1] - domy_d[j][0];
+			cFA.drawImage(dom_d, domy_d[j][1], 20);
+			if (domy_d[j][1] < -dom_d.width) {
+				domy_d[j][1] = 200;
+				domy_d[j][0] = 2 + Math.random()
+			}
+		}
+
+		//rysujemy fantomasa
+		fantomas.draw();
+
+		//i jego super strza³ z pistoletu
+		if (Math.random()>0.8) cFA.drawImage(fire,114,43)//images,x,y
+	}
+
+	//odpalamy funkcjê draw()
+	fantom.onload = function(){
+		setInterval('drawFantomasAkcja()',100);			
+	}  
+	</script>

@@ -1,0 +1,35 @@
+<input type="button" id="guzik" value="kliknij" />
+<div id="czyPrawy"></div>
+
+<script>
+//Dla "normalnego œwiata" kolejne przyciski maj¹:
+
+//lewy guzik - 0
+//œrodkowy guzik - 1
+//prawy guzik - 2
+function prawyButton(e) {
+    var prawyGuzik;
+    if (!e) var e = window.event;
+    if (e.button) return (e.button==2)?true:false;
+    return false;
+}
+
+function rightClickEvent(e){
+if (!e) var e = window.event;
+ if(prawyButton(e) ){
+ var answer = "you pressed right button";
+   return answer;
+ }
+ else{
+ var answer = "you pressed left button";
+ return answer;
+ }
+
+}
+
+
+document.getElementById('guzik').onclick = function(e){
+alert(rightClickEvent(e) );
+//document.getElementyById('czyPrawy').innerHTML = rightClickEvent(e);
+}
+</script>

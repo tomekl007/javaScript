@@ -1,0 +1,241 @@
+<style>
+ /*Praca zakoñczona. ostatnim krokiem jest ostylowanie naszego dzie³a.
+Wpierw stylujemy linki miniaturki. Pamiêtajmy by mia³y ustawion¹ position:relative 
+gdy¿ korzystamy z tego przy wstawianiu grafiki ³adowania do ich wnêtrza (
+z wykorzystaniem wczeœniej opisanego sposobu wyœrodkowania z pomoc¹ css):*/
+
+	
+.kartofel-lightbox {
+    margin:3px;
+    padding:2px;
+    border:1px solid #ccc;
+    position:relative;
+    display:block;
+    width:130px;
+    height:130px;
+    float:left;
+}
+ 
+.kartofel-lightbox img {
+    border:0;
+}
+
+ /*Pozosta³o nam ostylowanie naszego lightboxa:*/
+/*Styl definiuje przycinanie elementów blokowych. 
+Je¿eli elementy bloku bêd¹ wychodziæ poza jego granice mog¹ zostaæ przyciête.
+
+Wartoœci:
+
+    • visible (wartoœæ domyœlna) 
+        elementy s¹ widoczne (nie s¹ przycinane) 
+    • hidden 
+        elementy wystaj¹ce nie s¹ widoczne 
+    • scroll 
+        elementy wystaj¹ce nie s¹ widoczne, ale pojawiaj¹ siê suwaki umo¿liwiaj¹ce przesuniêcie niewidocznych elementów 
+    • auto -
+        przegl¹darka decyduje o wygl¹dzie elementów wystaj¹cych 
+    • inherit - CSS2
+        przejêcie wartoœci "rodzica", np. overflow:inherit; */
+	
+/* t³o zas³aniaj¹ce ca³¹ stronê */
+.lightbox-background {
+    position:fixed;
+    left:0;
+    top:0;
+    overflow:hidden;
+    background:#333;
+    opacity:0.5;
+    -moz-opacity:0.5;
+    z-index:9999;
+    cursor:pointer;
+}
+ 
+/* kontener z du¿a grafik¹ */
+.lightbox-container {
+    background:#fff;
+    padding:10px;
+    position:fixed;
+    z-index:10000;
+    left:50%;
+    top:50%;
+    -moz-border-radius:10px;
+    -webkit-border-radius:10px;
+    -moz-box-shadow:#333 0px 0px 7px;
+    -webkit-box-shadow:#333 0px 0px 7px;
+}
+ 
+/* opis du¿ej grafiki */
+.lightbox-container .opis {
+    font:12px Arial;
+    color:#666;
+    text-align:center;
+    border-top:1px solid #eee;
+    padding-top:7px;
+}
+ 
+/* przycisk zamykania */
+.lightbox-container .close {
+    border:0;
+    width:28px;
+    height:28px;
+    position:absolute;
+    right:-7px;
+    top:-7px;
+    text-indent:-999px;
+    cursor:pointer;
+    background:url(lightbox-close.png) no-repeat;
+}
+ 
+/* grafika ³adowania wstawiana do miniaturek */
+.lightbox-loading {
+    background:url(loading.gif) no-repeat;
+    width:20px;
+    height:20px;
+    position:absolute;
+    left:50%;
+    top:50%;
+    margin:-10px;
+    overflow:hidden;
+    -moz-border-radius:3px;
+    -webkit-border-radius:3px;
+}
+
+</style>
+
+<a href="kartofel_gears.jpg" title="Super bohater wojny z Szanañcz¹" class="kartofel-lightbox">
+    <img src="kartofel_gears_thumb.jpg" width="130" height="130" alt="" />
+</a>
+<a href="wietnam.jpg" title="Witamy w wietnamie" class="kartofel-lightbox">
+    <img src="wietnam_thumb.jpg" width="130" height="130" alt="" />
+</a>
+
+<script>
+_Lightbox = function(_obW) {
+//obW wskazuje na obiekt (link), który utworzy³ naszego lightboxa
+    this.obW = _obW;
+    this.opis = _obW.title || "...";
+    this.div_opis = null;
+    this.div_background = null;
+    this.div_container = null;
+    this.image = null;
+    this.imageWidth = 0;
+    this.imageHeight = 0;
+    this.loading = null;
+    this.o = this;
+	
+	/* Po klikniêciu na t³o, albo na przycisk zamykaj¹cy powinniœmy usun¹æ nasz lightbox. 
+	Napiszmy wiêc stosown¹ metodê:*/
+
+	
+    this.destroy = function() {
+    this.div_background.parentNode.removeChild(this.div_background);
+    this.div_container.parentNode.removeChild(this.div_container);
+    delete this;
+}
+
+/*Usuwamy blok z t³em, blok z kontenerem, a na koñcu ca³y obiekt lightboxa. Prosta czarna magia. */
+     
+    this.init = function() {
+	  var body = document.getElementsByTagName('body')[0];
+	
+        var ob = this.o;
+ /*Tworzymy span z grafik¹ ³adowania. Nastêpnie wstawiamy go do klikniêtego linka.*/
+    this.loading = document.createElement('span');// span -Element definiuje i grupuje elementy liniowe oraz ich atrybuty.
+    this.loading.className = 'lightbox-loading';
+    this.obW.appendChild(this.loading);
+ 
+    var href = this.obW.href;
+ 
+ /*Kolejnym krokiem jest utworzenie nowego obiektu typu Image który jest nasz¹ du¿¹ grafik¹*/
+    this.image = new Image();
+	/* Po jej za³adowaniu pobieramy wymiary, usuwamy grafikê ³adowania oraz zaczynamy tworzyæ 
+	naszego lightboxa. W³aœciwoœæ src dla tego obiektu ustawiamy dopiero po zadeklarowaniu 
+	funkcji zdarzenia onload, */
+    this.image.onload = function () {
+        ob.loading.parentNode.removeChild(ob.loading);
+        ob.loading = null;
+ 
+        ob.imageWidth = ob.image.width;
+        ob.imageHeight = ob.image.height;
+ 
+ //Na pocz¹tku tworzymy blok z t³em, którym przykrywamy ca³¹ stronê: 
+        ob.div_background = document.createElement('div');
+        ob.div_background.className = 'lightbox-background';
+		/*t³o rozci¹gamy do rozmiarów ca³ej powierzchni okna za pomoc¹ w³aœciwoœci innerWidth i 
+		innerHeight obiektu window. Pozycjonowanie fixed sprawia, ¿e niezale¿nie od po³o¿enia strony
+		, nasze t³o okrywa ca³¹ widoczn¹ powierzchniê.*/
+        ob.div_background.style.width = window.innerWidth;
+        ob.div_background.style.height = window.innerHeight;
+        ob.div_background.title = "Kliknij aby zamkn¹æ";
+		
+		/*Po klikniêciu na t³o, bêdziemy chcieli usun¹æ naszego lightboxa, dlatego
+		ustawiamy zdarzenie onclick dla t³a, w którym wywo³ujemy metodê destroy*/
+        ob.div_background.onclick = function() {
+            ob.destroy();
+        }
+		/* T³o do³¹czamy na koñcu sekcji body, któr¹ pobieramy za pomoc¹ getElementsByTagName(). */
+		body.appendChild(ob.div_background);
+		/*Kolejnym blokiem który utworzymy jest kontener w którym umieœcimy du¿¹ grafikê,
+		przycisk zamykaj¹cy (X) i opis grafiki. Taki blok musimy do³¹czyæ tu¿ za blokiem z t³em.
+		Pamiêtaj by nie pomyliæ siê i nie wstawiaæ go w blok t³a, gdy¿ ten ma na³o¿on¹ 
+		przezroczystoœæ (opacity), a nie chcemy by nasz kontener te¿ j¹ mia³. */
+		 ob.div_container = document.createElement('div');
+        ob.div_container.className = 'lightbox-container';
+        ob.div_container.style.marginTop = -(ob.imageHeight/2+20)+'px';
+        ob.div_container.style.marginLeft = -(ob.imageWidth/2)+'px';
+        ob.div_container.style.width = ob.imageWidth + 'px';
+        ob.div_container.style.height = ob.imageHeight+20 + 'px';
+		//Po okreœleniu wymiarów kontenera, do³¹czamy do niego du¿¹ grafikê (ob.image)
+        ob.div_container.appendChild(ob.image); 
+		
+		 /*Opis grafiki tworzmy tak samo jak poprzednie elementy, wstawiaj¹c do
+		 niego tekstowego noda z opisem pobranym wczeœniej z atrybutu title:*/
+
+	     ob.div_opis = document.createElement('div');
+         ob.div_opis.className = 'opis';
+         ob.div_opis.appendChild(document.createTextNode(ob.opis));
+         ob.div_container.appendChild(ob.div_opis);
+		 /*Kolejny raz powtarzamy nasze dzia³anie by utworzyæ przycisk zamykania.
+		 Wykorzystuje on do tego t¹ sam¹ metodê z której korzysta t³o naszego lightboxa.
+		 Po utworzeniu przycisku, do³¹czamy go do naszego kontenera. */
+		 var btnClose = document.createElement('input');
+         btnClose.type = "button";
+         btnClose.className = "close";
+         btnClose.value = "x";
+         btnClose.onclick = function() {
+           ob.destroy();
+         }
+           ob.div_container.appendChild(btnClose);
+ 
+            body.appendChild(ob.div_container);
+        }
+        this.image.src = this.obW.href;
+    }
+    this.init();
+}
+ 
+ /*Tworzenie naszego obiektu lightbox mamy zakoñczone. Przyszed³ czas by go uwolniæ :).
+Aby ³atwo móc u¿ywaæ naszego nowego obiektu, rozszerzmy obiekty typu Node 
+(czyli wszystkie elementy na stronie) o mo¿liwoœæ odpalenia naszego super lightboxa: */
+
+/*Naszego lightboxa wywo³ujemy tylko dla linków prowadz¹cych do grafik, st¹d za
+ pomoc¹ wyra¿eñ regularnych sprawdzamy atrybut href linka. Je¿eli koñczy siê standardowym 
+ rozszerzeniem dla grafiki (jpg, png, jpegm, gif) to ustawiamy dla niego zdarzenie onclick 
+ tworz¹ce naszego lightboxa. */
+Node.prototype.lightbox = function() {
+    if (!(new RegExp('^.+jpg|png|jpeg|gif$', 'gi')).test(this.href)) return
+    this.onclick = function() {
+        var lighbox = new _Lightbox(this);
+        return false;
+    }      
+}
+ /*Od tej pory nasze dzie³o mo¿emy wywo³aæ dla wszystkich linków - np z klas¹ "kartofel-lightbox":*/
+window.onload = function() {
+    var a = document.getElementsByTagName('a');
+        for (i=0; i<a.length; i++) {
+            if (a[i].className == 'kartofel-lightbox') {
+                a[i].lightbox();
+            }
+        }
+}
+</script>

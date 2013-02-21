@@ -1,0 +1,51 @@
+<form class="threeRect">
+<div style="width:100px; height:100px; background-color:#E6E6FF; border:1px solid #000080; color:#000080; text-align:center" id="blok_niebieski">1
+			<div style="width:60px; height:60px; background-color:#FF3333; border:1px solid #CC0000; color:#CC0000; margin:auto; text-align:center" id="blok_czerwony">2
+				<div style="width:30px; height:30px; background-color:#FFFFB1; border:1px solid #FFFF0B; color:#FFCC00; margin:auto;  text-align:center" id="blok_zolty">3</div>
+	</div>
+		</div>
+	<p id="from_to_do">zjecha³eœ kursorem z:</p> 
+	<p id="from_to_z">najecha³eœ kursorem na:</p>
+	<div id="test3">Odpalajacy:</div>
+</form>
+	<script>
+	/*Na szczêœcie dla zdarzeñ mouseover i mouseout istnieje w³aœciwoœæ relatedTarget,
+	która mówi nam z jakiego elementu myszka przyby³a (dla zdarzenia mouseover) i na 
+	jaki element zd¹rza (dla zdarzenia mouseout).
+
+Microsoft jak zwykle ;) stworzy³ swoje w³asne w³aœciwoœci. Tak wiêc, aby odczytaæ 
+w IE sk¹d przyby³a myszka - skorzystamy z w³aœciwoœci fromElement, a by odczytaæ obiekt,
+ do którego pod¹¿a myszka skorzystamy z metody toElement.*/
+	function targetFrom(e) {
+    if (!e) var e = window.event;
+    if (e.relatedTarget) return e.relatedTarget;
+    else if (e.fromElement) return e.fromElement;
+}
+
+function targetTo(e) {
+    if (!e) var e = window.event;
+    if (e.relatedTarget) return e.relatedTarget;
+    else if (e.toElement) return e.toElement;
+}
+
+function targetInfo(e){
+if (!e) var e = window.event;
+var info = 'Odpalaj¹cy: ';
+			info += 'e.target:' + e.target;
+			info +=	', znacznik:' + e.target.nodeName;
+			info += ', width: '+ e.target.style.width;
+			info += ', height: '+ e.target.style.height;
+			info += ', kolor t³a: '+ e.target.style.backgroundColor;
+return info;
+}
+	
+	
+		document.getElementById('blok_czerwony').onmouseover = function(e) {
+			document.getElementById('from_to_z').innerHTML = 'zjecha³eœ kursorem z: '+targetFrom(e).id;
+			document.getElementById('test3').innerHTML = targetInfo(e);
+		}
+		document.getElementById('blok_czerwony').onmouseout = function(e) {
+			document.getElementById('from_to_do').innerHTML = 'najecha³eœ kursorem na: '+targetTo(e).id;
+			document.getElementById('test3').innerHTML = targetInfo(e);
+		}
+	</script>

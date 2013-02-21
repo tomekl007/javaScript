@@ -1,0 +1,46 @@
+<p>
+	<form class="Formularz">
+		<fieldset>
+		<input type="text" id="odliczaj" style="width:500px" value="" />
+		</fieldset>
+	</form>
+ 
+ 
+<script>
+function pokaz_odliczanie() {
+    var Rok = (new Date).getFullYear(); //pobieramy teraŸniejszy rok
+    var Miesiac = 10;
+    var Dzien = 29;
+    var dzis = new Date(); //pobieramy dzisiejsz¹ datê
+    var BardzoWaznaData = new Date(Rok,Miesiac-1,Dzien,9,30); //ustawiamy wa¿n¹ datê do której bêdziemy odliczaæ (urodzi³em siê o 9:30 ^^)
+    var ms_w_dniu = 24 * 60 * 60 * 1000; //1 dzien w milisekundach - to w nich jest przecie¿ zwracany czas metod¹ getTime któr¹ wykorzystujemy poni¿ej
+ 
+    var roznica = (BardzoWaznaData.getTime() - dzis.getTime()); //obliczamy ró¿nicê w datach - zwrazana liczba reprezentuje iloœæ milisekund
+ 
+    //zwracan¹ liczbê zamieniamy na iloœæ dni + po przecinku reszta czyli h, m i s. Dziel¹c na dni, otrzymujemy godziny w postaci x/24 itp.
+    var e_zostaloDni = roznica / ms_w_dniu; 
+    var zostaloDni = Math.floor(e_zostaloDni); //chcemy liczbê dni - zaokr¹glamy wynik
+ 
+    var e_zostaloGodzin = (e_zostaloDni - zostaloDni)*24;
+    var zostaloGodzin = Math.floor(e_zostaloGodzin);
+ 
+    var e_zostaloMinut = ((e_zostaloGodzin - zostaloGodzin)*60);
+    var zostaloMinut = Math.floor(e_zostaloMinut);
+ 
+    var e_zostaloSekund = Math.floor((e_zostaloMinut - zostaloMinut)*60);
+    var zostaloSekund = Math.floor(e_zostaloSekund);
+ 
+    var tekst = 'Do moich kolejnych urodzin pozostalso: '
+                    +zostaloDni+' dni, '
+                    +zostaloGodzin+ ' godzin, '
+                    +zostaloMinut+ ' minut i '
+                    +zero(zostaloSekund)+' sekund';
+ 
+  
+    document.getElementById('odliczaj').value = tekst;
+    setTimeout("pokaz_odliczanie()",1000)
+}
+ 
+pokaz_odliczanie()  
+</script>
+</p>

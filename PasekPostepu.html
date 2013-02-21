@@ -1,0 +1,75 @@
+ï»¿<html lang="pl">
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<title>Kurs Javascript - ³adowanie grafiki</title>
+</head>
+	
+t>
+	<style>
+		div#loading {width:600px; height:10px; background:#666666; overflow:hidden; margin:10px; border:1px solid #4C4C4C; padding:1px}
+		div#pasekPostepu {width:0%; height:98%; background:#CF0000; overflow:hidden}
+	</style>
+<body>
+
+<div class="top_bar" id="top_bar">
+	<div><span><a href="../" class="back">Strona pocz¹tkowa</a></span></div>
+</div>
+
+<div class="page_content">
+	<h1 class="page_title">Preloading</h1>
+	<p>
+	Przyk³ad pokazuje ³adowanie grafiki do cache przegl¹darki. £adowanie takie odbywa siê tylko 1 raz. Drugi raz skrypt od razu za³aduje grafikê. Aby powtórnie za³adowa³ trzeba albo oczyœciæ cache przegl¹darki, albo do ka¿dej nazwy obrazka dodaæ jakiœ randomowy query string np. <strong>?=Math.random()*99999</strong>. Jednak nam przecie¿ nie o to chodzi :)
+	</p>
+
+	<input type="button" value="Zacznij ³adowanie grafiki" id="start_load" />
+
+	<script>
+//tablica z nazwami obrazków do za³adowania
+var nazwyObrazkow = [
+    'obrazek1.gif',
+    'obrazek2.gif',
+  //  'obrazek3.gif',
+  //  'obrazek4.gif',
+  //  'obrazek5.gif',
+  //  'obrazek6.gif'
+];
+var ile_zaladowano = 0; //ile obiektów Images ju¿ za³adowano do pamiêci
+var szerokosc_przeskoku = (100/nazwyObrazkow.length); //szerokoœæ oznaczaj¹ca % paska po za³adowaniu 1 obrazka
+var obr = []; //tablica bêdzie zawiera³a obiekty Image
+var div = null; //zmienna pod któr¹ utworzymy dynamicznie div zawieraj¹cego div-pasek postêpu
+var pasek = null; //zmienna pod któr¹ utworzymy dynamicznie div-pasek postêpu
+var strona = 'index.php'; //strona na któr¹ przeniesie po zakoñczonym ³adowaniu
+ 
+ 
+//funkcja rozpoczynaj¹ca ³adowanie obrazków
+function start_Loading() {
+    div = document.createElement('div');
+    div.id = 'loading';             //dziêki temu skorzystamy ze zdefiniowanych styli
+    pasek = document.createElement('div');
+    pasek.id = 'pasekPostepu';
+    div.appendChild(pasek);         //wstawiamy div-pasek postêpu do diva
+    document.getElementsByTagName('body')[0].appendChild(div);      //wstawiamy div na koñcu body
+ 
+    for(var x=0; x<nazwyObrazkow.length; x++) {      //pêtla po nazwach obrazków...
+        obr[x] = new Image();
+        obr[x].onload = ustawPasek;         //dla ka¿dego obiektu ustawiamy zdarznie onload
+        obr[x].src = nazwyObrazkow[x];          
+    }
+}
+ 
+ 
+//funkcja odpalana dla ka¿dego obiektu Image, które wczeœniej stworzyliœmy. Sprawdza ile obiektów zosta³o za³oadowanych i ustawia odpowiedni¹ szerokoœæ paska
+function ustawPasek() {
+    ile_zaladowano++;
+    pasek.style.width = ile_zaladowano * szerokosc_przeskoku + "%"; //zmianiamy szerokoœæ paska (podan¹ w %)
+     
+    if (ile_zaladowano >= nazwyObrazkow.length) {
+        setTimeout("location.href='"+strona+"'", 2000) //po za³adowaniu wszystkich grafik czekamy 2s i przenosimy na stronê
+    }
+}
+ 
+document.getElementById('start_load').onclick = start_Loading;
+</script>
+</div>
+</body>
+</html>

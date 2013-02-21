@@ -1,0 +1,33 @@
+	<p>
+	<form class="form" id="formularzKolor">
+		<fieldset>
+			<legend>Wybierz dwa (2) ulubione owoce</legend>
+			<input type="checkbox" value="jagoda" name="kolor" /> niebieski<br />
+			<input type="checkbox" value="jablko" name="kolor" /> czerwony<br />
+			<input type="checkbox" value="arbuz" name="kolor" /> zielony<br />
+			<input type="checkbox" value="pomarancz" name="kolor" /> pomarañcz		
+		</fieldset>
+		<fieldset>
+			<input type="button" value="SprawdŸ" id="sprawdzCheckboxy" />
+		</fieldset>			
+	</form>
+	<script>
+	function sprawdzCheckboxy() {
+		var ileZaznaczonych = 0;
+		var formularz = this.form;
+		var checkboxy = formularz.kolor;
+
+		for (x=0; x<checkboxy.length; x++) {
+			if (checkboxy[x].checked) {
+				ileZaznaczonych++;
+			}
+		}
+		if (ileZaznaczonych!=2) {
+			alert('Wybra³eœ ' +ileZaznaczonych+', a musisz wybraæ 2');
+		} else {
+			alert('Wybra³eœ ' +ileZaznaczonych+' owoce. B¹dŸ pozdrowiony!');
+		}
+	}
+	
+	document.getElementById('sprawdzCheckboxy').onclick = sprawdzCheckboxy;
+	</script>

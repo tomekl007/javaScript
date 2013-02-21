@@ -1,0 +1,57 @@
+<!DOCTYPE html>  
+<html>  
+
+    <head>  
+        <title>Canvas from scratch</title>  
+        <meta charset="utf-8">  
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>  
+        <script>  
+            $(document).ready(function() {  
+                var canvas = document.getElementById("myCanvas");  
+                var ctx = canvas.getContext("2d"); 
+
+				var image = new Image();  
+                image.src = "sample.jpg";  
+                $(image).load(function() {  
+                ctx.drawImage(image, 0, 0);  
+                 });  
+$(canvas).click(function(e) {  
+/*Within the click handler you want to work out the pixel that the mouse has clicked on the canvas.
+ To do this you first need to calculate the offset in pixels of the top left position of the canvas from
+ the top left edge of the browser window, you can use the jQuery offset method for this*/
+    var canvasOffset = $(canvas).offset();  //offset() returns an object containing the properties top and left.
+	console.log("canvas offset.left : " + canvasOffset.left +  " + canvasOffset.top : " + canvasOffset.top );
+	
+	/*ou can then infer the pixel clicked on the canvas by subtracting the offset from 
+	the mouse position of the click event (pageX and pageY). You should definitely spend 
+	some time reading up on the JavaScript click event if you want to understand this further.*/
+	
+	//e.pageX - The mouse position relative to the left edge of the document. 
+	//jesli chce relatywnie do innego elementu, to biore jego offset i odejmuje go od e.pageX
+	console.log("e.pageX before substract offset.left : " + e.pageX);
+    var canvasX = Math.floor(e.pageX-canvasOffset.left);  
+	console.log("e.pageY before substract offset.top : " + e.pageY);
+    var canvasY = Math.floor(e.pageY-canvasOffset.top);  
+	
+	/*The following four lines grab the CanvasPixelArray for the canvas (getImageData),
+	store it in a variable, find the index of the red color value for the clicked pixel 
+	by calculating it using the formula that you saw earlier, and then stores the pixel 
+	color values as a CSS rgba string. Finally, the last step is to set the background color
+	of the body element to that of the clicked pixel.*/
+    var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);  
+    var pixels = imageData.data;  
+	//podstawienie do wzoru wyjasnianianego na http://net.tutsplus.com/tutorials/javascript-ajax/canvas-from-scratch-pixel-manipulation/
+    //dla tego Red bo jak dostanie sie do Red(to G = Red + 1, B = Red +2, A = Red +3)
+	var pixelRedIndex = ((canvasY - 1) * (imageData.width * 4)) + ((canvasX - 1) * 4);  
+    var pixelcolor = "rgba("+pixels[pixelRedIndex]+", "+pixels[pixelRedIndex+1]+", "+pixels[pixelRedIndex+2]+", "+pixels[pixelRedIndex+3]+")";  
+    $("body").css("backgroundColor", pixelcolor);  
+});				
+            });  
+        </script>  
+    </head>  
+    <body>  
+        <canvas id="myCanvas" width="500" height="500">  
+            <!-- Insert fallback content here -->  
+        </canvas>  
+    </body>  
+</html>  

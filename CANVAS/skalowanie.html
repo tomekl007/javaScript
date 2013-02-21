@@ -1,0 +1,18 @@
+	<canvas width="160" height="160" id="canvas_scale">Twoja przegl¹darka nie obs³uguje canvas</canvas>
+	<script>
+	/*drawImage(image, x, y, width, height) - pierwsze atrybuty ju¿ znamy. 
+	Dodatkowe width i height okreœlaj¹ nowe rozmiary rysowanego obrazka.
+	Mo¿emy je wykorzystaæ do skalowania obrazka.*/
+    var c2 = document.getElementById('canvas_scale').getContext('2d');
+    var house = new Image();		
+		house.onload = function(){
+			//wczytujemy t³o
+			for (x=0; x<4; x++) {
+				for (y=0; y<4; y++) {
+					c2.drawImage(house, x*40,y*40,40,40);//to ryzusje mozaike 16 obrazkow 
+				}
+			}			
+			c2.drawImage(house,40,40,80,80);//to rysuje na srodku wiekszy obrazek 
+		}
+		house.src = 'domek.jpg';
+	</script>

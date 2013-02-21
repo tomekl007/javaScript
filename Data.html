@@ -1,0 +1,66 @@
+
+<script>
+var czas = new Date;
+ 
+function zero(liczba) {
+    return liczba=(liczba < 10)? "0"+liczba : liczba;
+}
+//Funkcja zero() wymaga podania w parametrze liczby i gdy ta jest 
+//mniejsza od 10 wówczas dopisuje do niej 0.
+ 
+document.write("Jest teraz czas: ");
+document.write(zero(czas.getHours())+":");
+document.write(zero(czas.getMinutes())+":");
+document.write(zero(czas.getSeconds()));
+document.write("<br />Dnia: ");
+document.write(zero(czas.getDate())+".");
+document.write(zero((czas.getMonth()+1))+"."+czas.getFullYear());  
+//Do metody getMonth() dodaliœmy 1, poniewa¿ Javascript numeruje miesi¹ce od 0.
+
+var czas = new Date();
+var dni = new Array("Poniedzia³ek", "Wtorek", "Œroda", "Czwartek", "Pi¹tek", "Sobota", "Niedziela");
+ 
+document.write("Dzisiaj jest dzieñ tygodnia: " + dni[czas.getDay()])
+</script>
+
+
+
+<form id="Formularz_zegarka">
+        <fieldset>
+        <input type="text" name="f_czas" size="8" /><br />
+        <input type="text" name="f_data" size="23" />
+        </fieldset>
+</form>
+
+
+
+
+
+<script>
+//dynamiczne wyswietlanie czasu
+function zero(element) { //1
+    if (element < 10){ 
+	return element = "0" + element;
+	}
+    else{
+	return element;
+	}
+}
+ 
+function pokaz_czas() {
+    var czas = new Date();
+    var dni = new Array("Niedziela", "Poniedzia\u0142ek", "Wtorek", "¦roda", "Czwartek", "Pi\u0105tek", "Sobota");
+    var data = zero(czas.getDate())+"."+zero((czas.getMonth()+1))+"."+czas.getFullYear()+" - "+dni[czas.getDay()];
+    var czas_na_zegarku = zero(czas.getHours())+":"+zero(czas.getMinutes())+":"+zero(czas.getSeconds());
+   document.getElementById('Formularz_zegarka').f_czas.value = czas_na_zegarku;
+   document.getElementById('Formularz_zegarka').f_data.value = data;
+		
+    setTimeout("pokaz_czas()",1000);
+	//Ca³a sztuczka polega na cyklicznym wywo³ywaniu funkcji,
+//	która pobiera datê, a nastêpnie wypisuje j¹ do odpowiednich pól. 
+//Cykliczne wywo³ywanie co 1s wykonujemy przy pomocy funkcji 
+//setTimeout('nazwa_funkcji()',czas_w_ms).
+}
+ 
+pokaz_czas();
+</script>

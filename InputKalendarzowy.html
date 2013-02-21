@@ -1,0 +1,310 @@
+
+<style>
+.ikona-kalendarza {width:30px; height:20px; border:0; background:url(calendar.gif) no-repeat; width:21px; height:21px; position:relative; top:2px; cursor:pointer}
+.kalendarz {width:150px; background:#fff; height:170px; padding:5px; border:1px solid #ddd; -moz-border-radius:4px; -webkit-border-radius:4px; }
+.kalendarz .input-prev, .kalendarz .input-next {width:30px; height:20px; border:1px solid #ddd; background:#fff; font:11px Arial; color:#333; -moz-border-radius:2px}
+.kalendarz .input-prev {float:left;}
+.kalendarz .input-next {float:right}
+.kalendarz .nazwa-miesiaca {font:11px Arial; color:#666; margin:0 40px; text-align:center;}
+.kalendarz .kalendarz-table {margin-top:30px}
+.kalendarz .kalendarz-table table {font:12px Arial; color:#666; position:absolute; top:0; left:0; margin-top:20px; width:100%;}
+.kalendarz .kalendarz-table table th {font:bold 11px Arial; color:#333; padding-top:3px;}
+.kalendarz .kalendarz-table table td.dzien {border:1px solid #ddd; padding:2px; font:12px Arial}
+.kalendarz .kalendarz-table table td.dzien:hover {background:#D1EBFD; cursor:pointer}
+</style>
+
+
+ <fieldset><input type="text" id="tekstowe1" value="pole 1" />  <input type="text" id="tekstowe2" value="pole 2" /></fieldset>
+    
+    <input type="button" id="input_zamien" value="zamieñ na kalendarzowe" />
+
+<script>
+//metoda wstawiaj¹ca element za elementem
+Node.prototype.insertAfter = function(newNode) {
+    if(this.nextSibling) { //jezeli dany element ma za soba jakis obiekt
+        return this.parentNode.insertBefore(newNode, this.nextSibling); //to wstawiamy przed tym obiektem nasz element
+    } else {
+        return this.parentNode.appendChild(newNode);
+    }
+}
+ 
+//metoda czyszcz¹ca element z jego dzieci
+Node.prototype.empty = function() {
+    if (this.childNodes.length) {
+        for (x=this.childNodes.length-1; x>=0; x--) {
+            this.removeChild(this.childNodes[x]);
+        }
+    }
+}
+
+_Kalendarz = function(_obW,_klasa) {
+/*Dziêki obiekt_wowo³uj¹cy bêdziemy wiedzieli, co utworzy³o nasz kalendarz
+ (a bêdzie to ikona kalendarza). W³aœciwoœæ o wskazuje na sam obiekt - wykorzystamy
+ to w pod obiektach. W atrybucie "_klasa" przeka¿emy klasê, jak¹ otrzyma nasz kalendarz.
+ W³aœciwoœæ text_input bêdzie wskazywa³a na pole tekstowe, przy którym umieœciliœmy nasz¹
+ ikonkê kalendarza. Pamiêtajmy, ¿e nasz kalendarz tworzy ikonka, nie samo pole tekstowe. */
+ 
+/*W³aœciwoœæ div_tabela_z_kalendarzem bêdzie zawiera³a tabelê z kalendarzem. 
+W³aœciwoœæ div_nazwa_miesiaca bêdzie elementem div, w którym wypiszemy nazwê miesi¹ca. 
+W³aœciwoœæ div_place to div, w który wszystko upchniemy i bêdziemy go pozycjonowaæ absolutnie. 
+div_guziki bêdzie miejscem z guzikami. */
+    this.teraz = new Date();
+    this.dzien = this.teraz.getDate();
+    this.miesiac = this.teraz.getMonth();
+    this.rok = this.teraz.getFullYear();
+    this.obiekt_wywolujacy = _obW;
+    this.text_input = _obW.previousSibling;
+    this.nazwy_miesiecy = null;
+    this.div_place = null;
+    this.div_tabela_z_kalendarzem = null;
+    this.div_nazwa_miesiaca = null
+    this.div_guziki = null;
+    this.o = this;
+	
+	
+	/*W metodzie inicjuj¹cej stworzyliœmy poszczególne divy z naszego kalendarza,
+	przypisaliœmy im odpowiednie klasy, a nastêpnie dla ka¿dego diva, wywo³aliœmy 
+	odpowiedni¹ metodê, która tworzy jego zawartoœæ. Te metody napiszemy ju¿ za chwilê.
+	Pozycjê naszego div_place (zawieraj¹cego wszystkie elementy) ustaliliœmy za pomoc¹ 
+	w³aœciwoœci offset dla pola tekstowego. Dziêki temu nasz kalendarz bêdzie siê znajdowa³ 
+	tu¿ pod polem tekstowym. */
+	this.init = function() {
+    //tworzymy div z ca³¹ zawartoœci¹
+    this.div_place = document.createElement('div');
+    this.div_place.className = _klasa;
+    this.div_place.style.position = "absolute"; //nie wazne jak ma klasa - musi byæ absolutnie :)
+    this.div_place.style.top = parseInt(this.text_input.offsetTop + this.text_input.offsetHeight) + 'px';
+    this.div_place.style.left = this.text_input.offsetLeft + 'px';             
+     
+    //tworzymy div z guzikami
+    this.div_guziki = document.createElement('div');
+    this.div_guziki.className = "guziki-prev-next"
+    this.div_place.appendChild(this.div_guziki);
+    this.create_guziki();
+ 
+    //tworzymy div z nazw¹ miesi¹ca
+    this.div_nazwa_miesiaca = document.createElement('div');
+    this.div_nazwa_miesiaca.className = 'nazwa-miesiaca';
+    this.div_place.appendChild(this.nazwa_miesiaca);
+    this.create_nazwa_miesiaca();
+ 
+    //tworzymy div z tabel¹ kalendarza
+    this.div_tabela_z_kalendarzem = document.createElement('div');
+    this.div_tabela.className = 'kalendarz-table';             
+    this.div_place.appendChild(this.div_tabela_z_kalendarzem);       
+    this.create_tabela_kalendarza();
+ 
+    //nasz div z zawartoœci¹ wrzucamy na koniec body
+    document.getElementsByTagName('body')[0].appendChild(this.div_place);
+}
+this.init(); //przy stworzeniu naszego obiektu od razu odpalamy funkcjê inicjuj¹c¹
+	
+	
+}
+
+ /*Przystêpujemy do pisania poszczególnych metod. Pierwsza z nich to create_guziki():*/
+this.create_guziki = function() {
+    var ob = this.o;
+    var buttonPrev = document.createElement('input');
+        buttonPrev.value = '<';
+        buttonPrev.type = "button";
+        buttonPrev.className = 'input-prev';
+        buttonPrev.onclick = function() {
+            ob.miesiac--;                                              
+            if (ob.miesiac<0) ob.miesiac = 11;
+            ob.create_tabela_kalendarza();
+            ob.create_nazwa_miesiaca();
+        }
+    this.div_guziki.appendChild(buttonPrev);
+                 
+    var buttonNext = document.createElement('input');
+        buttonNext.className = 'input-next';
+        buttonNext.value = '>';
+        buttonNext.type = "button";
+        buttonNext.onclick = function() {
+            ob.miesiac++;                                              
+            if (ob.miesiac>11) ob.miesiac = 0;
+            ob.create_tabela_kalendarza();
+            ob.create_nazwa_miesiaca();
+        }
+    this.div_guziki.appendChild(buttonNext); 
+}
+
+/*Stworzyliœmy 2 przyciski. Dodatkowo napisaliœmy im obs³ugê zdarzenia onclick, z 
+wykorzystaniem techniki przekazania obiektu rodzica. W zasadzie nie ma tu nic trudnego. 
+Obs³ugujemy zwyk³¹ zmianê miesiêcy, a po ka¿dej takiej zmianie, tworzymy na nowo tabelê 
+z kalendarzem oraz wypisujemy nazwê miesi¹ca. Pamiêtajmy, ¿e miesi¹ce w javascript zawieraj¹ 
+siê w zakresie 0 - 11. */
+
+
+ /*Kolejn¹ metod¹, któr¹ utworzymy bêdzie metoda create_nazwa_miesiaca()
+ s³u¿¹ca do wypisania nazwy aktualnie wyœwietlanego miesi¹ca:*/
+
+    this.create_nazwa_miesiaca = function() {
+        var nazwy_miesiecy = ['styczeñ', 'luty', 'marzec', 'kwiecieñ', 'maj', 'czerwiec', 'lipiec', 'sierpieñ', 'wrzesieñ', 'paŸdziernik', 'listopad', 'grudzieñ'];
+        
+        //tworzymy nazwê miesi¹ca
+		var miesiac = document.createTextNode(nazwy_miesiecy[this.miesiac])
+        
+        this.div_nazwa_miesiaca.empty(); //czyscimy zawartosc diva
+        this.div_nazwa_miesiaca.appendChild(miesiac);
+    }/*Div z nazw¹ miesi¹ca wyczyœciliœmy z jego dzieci, a nastêpnie
+ wstawiliœmy do niego teskt - nazwê miesi¹ca pobran¹ z tabeli. */
+
+ 
+ 
+ this.pobierzDni = function()  {
+    var miesiac = this.miesiac+1;
+    var liczba_dni = [0,31,28,31,30,31,30,31,31,30,31,30,31];
+        liczba_dni[2] = this.przestepnyRok() ? 29 : 28;
+    return liczba_dni[miesiac];
+}
+/* Dzia³anie tej metody polega na sprawdzeniu numeru miesi¹ca i zwróceniu odpowiedniej 
+liczby dni. W przypadku lutego (linijka 9), musimy wyliczyæ, czy mamy do 
+czynienia z rokiem przestêpnym. Stwórzmy wiêc jeszcze jedn¹ metodê, wed³ug informacji
+ zawartych na Wikipedii:*/
+
+	
+this.przestepnyRok = function() {
+    if (((this.rok % 4)==0) && ((this.rok % 100) != 0) || ((this.rok % 400)==0)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/*Pod zmienn¹ ob podstawiamy obiekt, gdy¿ w tworzonej tabeli bêd¹ przyciski 
+ze zdarzeniami click. Dni wyliczamy dodaj¹c do nich pozycjê startow¹. Dalsza
+ czêœæ tej metody polega na wykonaniu kilku pêtli. Pierwsza z nich to utworzenie
+ nazw dni. Nie specjalnego. Druga tworzy puste komórki tabeli - od 0 do pozycji
+ pierwszego dnia w miesi¹cu (pozycjaStartowa). Trzecia - ostatnia pêtla tworzy 
+ komórki z dniami. Ka¿da taka komórka ma przypisan¹ klasê "dzieñ", oraz 
+ przy klikniêciu zwraca do pola tekstowego datê. Po utworzeniu zawartoœci tabeli,
+ wstawiamy j¹ do oczyszczonego div_tabela_z_kalendarzem. Przy ka¿dej pêtli sprawdzamy,
+ czy nie doszliœmy do koñca tygodnia za pomoc¹ równania (x%7==0). Je¿eli tak siê dzieje,
+ wówczas do do³¹czamy do tabeli aktualny wiersz, i zaczynamy tworzyæ nowy. */
+this.create_tabela_kalendarza = function() {   
+    var ob = this.o;
+    var pierwszyDzienMiesiaca = new Date(this.rok, this.miesiac, 1);
+ 
+    var pozycjaStartowa = pierwszyDzienMiesiaca.getDay();                  
+         
+    var dni = this.pobierzDni();
+        dni += pozycjaStartowa;                
+         
+    var dni_tygodnia = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+    var tabela = document.createElement('table');
+        tabela.className = 'kalendarz-table';
+ 
+    this.div_tabela_z_kalendarzem.empty();
+ 
+    //pierwsza pêtla - nag³ówek tabeli z nazwami dni
+    var tr = document.createElement('tr');
+    for (i = 0; i < dni_tygodnia.length; i++) {                 
+        var th = document.createElement('th');
+            th.appendChild(document.createTextNode(dni_tygodnia[i]));
+            tr.appendChild(th);
+    }
+    tabela.appendChild(tr);
+     
+    //druga pêtla - puste komórki do momentu pierwszego dnia
+    var tr = document.createElement('tr');
+ 
+    for (j = 0; j < pozycjaStartowa; j++) {                 
+        if ( j%7 == 0) {                   
+            tabela.appendChild(tr);
+            var tr = document.createElement('tr');                             
+        }                      
+ 
+        var td = document.createElement('td');
+            td.appendChild(document.createTextNode(' '));
+        tr.appendChild(td);
+    }
+     
+	 /*Wykonaliœmy kolejno trzy pêtle. Pierwsze dwie to chleb powszechni dla super bohaterów. 
+	 Przypatrzmy siê trzeciej pêtli. Na jej pocz¹tku ustawiamy wartoœæ dnia. Dla poprawienia 
+	 estetyki wstawiamy zero wiod¹ce do numeru dnia. Podobnie postêpujemy zreszt¹ przy miesi¹cu. 
+	 Ka¿dej komórce w tej pêtli ustawiamy klasê "dzien", oraz przypisujemy jej zdarzenie click.
+	 Zdarzenie to wstawia zero wiod¹ce dla miesi¹ca, oraz wylicza rok. Javascript nie za bardzo
+	 sobie radzi z latami po 2000 roku zwracaj¹c je jako 100+n, dlatego musimy do tej liczby 
+	 dodaæ 1900. Ostatnia czynnoœæ z tego zdarzenia to ustawienie naszemu polu tekstowemu 
+	 odpowiedniej wartoœci.
+Nasza metoda koñczy siê wstawieniem do diva div_tabela_z_kalendarzem naszej nowo utworzonej 
+tabeli. W³ala. Praktycznie (nie zupe³nie) skoñczyliœmy pisanie naszego obiekt ukalendarza. */
+    //trzecia pêtla - wypisujemy dni
+    for (i = pozycjaStartowa; i < dni; i++) {                   
+        if ( i%7 == 0 ) {
+            tabela.appendChild(tr);
+            var tr = document.createElement('tr');                             
+        }
+        var nr_dnia = parseInt(i-pozycjaStartowa+1);
+        if (nr_dnia < 10) nr_dnia = "0" + nr_dnia;
+        var td = document.createElement('td');                     
+            td.appendChild(document.createTextNode(nr_dnia));
+            td.className = 'dzien';
+            td.onclick = function() {
+                var miesiac = ((ob.miesiac+1) < 10)? "0"+(ob.miesiac+1) : ob.miesiac+1; 
+                ob.text_input.value = ob.rok + '-' + miesiac + '-' + this.firstChild.nodeValue;
+            };
+        tr.appendChild(td);
+         
+    }
+    tabela.appendChild(tr);
+     
+    this.div_tabela_z_kalendarzem.appendChild(tabela);
+}
+
+ /*Metoda powinna utworzyæ prz ydanym inpucie ikonkê kalendarza, po 
+ klikniêciu której stworzy siê nasz obiekt kalendarz.*/
+Node.prototype.kalendarz = function() {
+    if (this.nodeName.toUpperCase()=='INPUT' && this.type.toUpperCase()=='TEXT') {
+        this.value = "rrrr-mm-dd";
+        this.kalendarzowy = true;           
+        var input = document.createElement('input');
+            input.type = 'button';
+            input.className = 'ikona-kalendarza';
+            input.jestKalendarz = false;
+            input.kalendarz = null;
+            input.onclick = function() {
+                if (!this.jestKalendarz) {
+                    this.kalendarz = new _Kalendarz(this,'kalendarz')
+                    this.jestKalendarz = true;
+                    return
+                } else {
+                    this.kalendarz.deleteKalendarz();
+                    this.jestKalendarz = false;
+                }   return
+                 
+            }
+        this.insertAfter(input);
+    }
+}
+
+/*Sprawdzamy czy nasz input jest polem tekstowym (dla innych nie by³o by sensu 
+zwracaæ wartoœci). Je¿eli jest, dzia³amy dalej. Ustawiamy mu informacyjn¹ wartoœæ,
+ oraz dodajemy mu w³aœciwoœæ kalendarzowy. Dziêki niej bêdziemy mogli w przysz³oœci 
+ ³atwo wykryæ, czy dany input jest ju¿ kalendarzowy. nastêpnie tworzymy nowy input -
+ nasz¹ ikonkê kalendarza. Ustawiamy jej klasê "ikona-kalendarza", oraz przypisujemy
+ obs³ugê zdarzenia click. Dodajemy jej te¿ dodatkow¹ w³aœciwoœæ, w której bêdziemy 
+ trzymaæ stan istnienia kalendarza. Prosta sprawa - je¿eli dla danego inputa kalendarz 
+ nie istnieje, to go tworzymy. Je¿eli jednak istnieje, to go usuwamy. Zaraz, zaraz -
+ przecie¿ nasz kalendarz, jeszcze siê nie potrafi usuwaæ. No to go tego nauczmy 
+ pisz¹c dla niego ma³¹ metodê: */
+ this.deleteKalendarz = function() {
+    this.div_place.parentNode.removeChild(this.div_place);
+    delete this.o;
+}
+
+
+
+document.getElementById('input_zamien').onclick = function () {
+		if (!document.getElementById('tekstowe1').kalendarzowy) {
+			document.getElementById('tekstowe1').kalendarz('kalendarz');
+		}
+		if (!document.getElementById('tekstowe2').kalendarzowy) {
+			document.getElementById('tekstowe2').kalendarz('kalendarz');
+		}
+	}
+</script>
+
+

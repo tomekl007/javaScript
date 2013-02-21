@@ -1,0 +1,54 @@
+<style>
+		.error {color:red !important; border:1px solid #CF0000  !important; background:#FFEDEC  !important;}
+		.komunikat-z-errorem, .pole-z-errorem {border:1px solid #9A0800; background:#FFA09A; text-align:center; -moz-border-radius:3px; -webkit-border-radius:3px; color:#9A0800; margin-left:10px; padding:3px; font-size:0.8em;}
+	</style>
+
+<form class="form">
+	<fieldset>
+		<div><input type="text" value="" id="pole2a" name="pole2a" /></div>
+		<div><input type="text" value="" id="pole2b" name="pole2b" /></div>
+	</fieldset>
+	</form>
+	
+	<script>
+	Node.prototype.insertAfter = function(newNode) {
+		if(this.nextSibling) {
+			return this.parentNode.insertBefore(newNode, this.nextSibling);
+		} else {
+			return this.parentNode.appendChild(newNode);
+		}
+	}
+	
+	Node.prototype.createError = function(msg, cl) {
+		var cl = cl || 'pole-z-errorem';
+			if (this.nextSibling && (this.nextSibling.nodeName.toLowerCase()=='span' && this.nextSibling.className.indexOf(cl)!=-1)) return false;
+			var spanError = document.createElement('span');
+				spanError.appendChild(document.createTextNode(msg));
+				spanError.className = cl;
+				this.insertAfter(spanError);
+	}
+	
+	Node.prototype.removeError = function(cl) {
+		var cl = cl || 'pole-z-errorem'
+		if (this.nextSibling && (this.nextSibling.nodeName.toLowerCase()=='span' && this.nextSibling.className.indexOf(cl)!=-1)) {
+			this.parentNode.removeChild(this.nextSibling);
+		}
+	}
+
+	function test2() {
+		console.log('s')
+		if (this.value!='') {
+			this.createError('B³êdna wartoœæ');
+			return false;
+		} else {
+			this.removeError();
+			return true;
+		}
+	}
+
+	var poleA = document.getElementById('pole2a');
+		poleA.onchange = test2;
+	var poleB = document.getElementById('pole2b');
+		poleB.onchange = test2;
+	</script>
+	<p>

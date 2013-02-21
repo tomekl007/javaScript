@@ -1,0 +1,31 @@
+<p>
+	<select id="pierwszy" multiple="multiple">
+		<option value="1"> opcja 1 </option>
+		<option value="2"> opcja 2 </option>
+		<option value="3"> opcja 3 </option>
+	</select>
+
+	<select id="drugi" multiple="multiple"></select>
+
+	<input type="button" id="kopiuj" value="Kopiuj zaznaczone elementy option" />
+
+	<script>
+	function przenies(skad, dokad) {
+		var select_pierwszy = document.getElementById(skad);
+		var select_drugi = document.getElementById(dokad);
+		if (select_pierwszy.length>0) {
+			console.log(select_pierwszy.length);
+			for (var x=0; x<select_pierwszy.length; x++){
+				if (select_pierwszy.options[x].selected) {
+					var NowyOption = new Option(select_pierwszy.options[x].firstChild.nodeValue, select_pierwszy.options[x].value, false, false);
+					select_drugi[select_drugi.length] = NowyOption;
+				}
+			}
+		}
+	}
+	
+	document.getElementById('kopiuj').onclick = function(){
+		przenies('pierwszy', 'drugi')
+	}
+	</script>
+	</p>

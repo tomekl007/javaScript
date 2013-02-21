@@ -1,0 +1,68 @@
+﻿<!DOCTYPE html>  
+<html>  
+    <head>  
+        <title>Canvas from scratch</title>  
+        <meta charset="utf-8">  
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>  
+        <script>  
+            $(document).ready(function() {  
+                var canvas = document.getElementById("myCanvas");  
+                var ctx = canvas.getContext("2d");  
+				ctx.save();
+				
+				ctx.shadowBlur = 15; //This will give the shadow a fifteen pixel blur, and will set the colour to solid black
+			    ctx.shadowOffsetX = 6;  
+                ctx.shadowOffsetY = 6; 
+				ctx.shadowColor = "rgba(125, 125, 125, 0.5)"; // Transparent grey  
+				
+     			ctx.translate(150, 150); // Translate to centre of square  
+				ctx.rotate(Math.PI/4); // Rotate 45 degrees (in radians)
+				ctx.fillRect(0, 0, 100, 100); 
+				/*In your case you want to double the size of the square, so you apply a scale of (2, 2):*/
+				ctx.scale(2, 2);
+				ctx.save();  
+				/* you basically shifted the entire coordinate system of the canvas 
+				so that its (0, 0) position is now at the place (100, 100).*/
+                ctx.translate(100, 100);  
+                ctx.fillStyle = "rgb(0, 0, 255)";  
+                ctx.fillRect(0, 0, 100, 100);  
+                ctx.restore();
+				
+				
+				/*Here is an example of how to create a linear gradient 
+				that runs from the top of the canvas, all the way to the bottom:*/
+				ctx.restore();
+				var gradient = ctx.createLinearGradient(0, 0, 0, canvas.height); 
+/*For example, the position 0 would represent the start of the gradient (the first x and y position),
+ and 1 would represent the end of the gradient (the second x and y position). You can also use decimal
+ points between 0 and 1 to assign a colour at a different point along the gradient, like 0.5 would
+ be half way along*/				
+                gradient.addColorStop(0, "rgb(255, 255, 255)");  
+                gradient.addColorStop(1, "rgb(0, 0, 0)");  
+                ctx.save();  
+                ctx.fillStyle = gradient;  
+                ctx.fillRect(0, 0, canvas.width, canvas.height);  
+                ctx.restore(); 
+
+				var canvasCentreX = canvas.width/2;  
+var canvasCentreY = canvas.height/2;  
+/*The code belowe creates a radial gradient that sits at the centre of the canvas. One of the circles in the gradient has a radius of 0, while the other has a radius of 250. The result is a traditional radial gradient that travels from the centre of the canvas outwards, like so:*/
+var gradient = ctx.createRadialGradient(canvasCentreX, canvasCentreY, 250, canvasCentreX, canvasCentreY, 0);
+ 
+gradient.addColorStop(0, "rgb(0, 0, 0)");  
+gradient.addColorStop(1, "rgb(125, 125, 125)");  
+ctx.save();  
+ctx.fillStyle = gradient;  
+ctx.fillRect(0, 0, canvas.width, canvas.height);  
+ctx.restore(); 
+
+				
+            });  
+        </script>  
+    </head>  
+    <body>  
+        <canvas id="myCanvas" width="500" height="500">  
+            <!-- Insert fallback content here -->  
+        </canvas>  
+    </body>  
+</html>  
